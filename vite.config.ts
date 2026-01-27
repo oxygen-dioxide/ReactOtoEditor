@@ -14,6 +14,8 @@ const dirname =
 export default defineConfig({
   define: {
     __BUILD_TIMESTAMP__: JSON.stringify(new Date().toISOString()),
+    __BUILD_TARGET__: JSON.stringify(process.env.BUILD_TARGET || 'web'),
+    __IS_VSCODE__: JSON.stringify(process.env.BUILD_TARGET === 'vscode'),
   },
   base: "./",
   plugins: [

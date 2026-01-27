@@ -1,6 +1,7 @@
 /node_modules
 /imgtmp
 /dist
+/dist-extension
 memo
 /hosts
 ansible.cfg

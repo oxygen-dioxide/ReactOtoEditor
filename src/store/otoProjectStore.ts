@@ -6,8 +6,11 @@ import { create } from "zustand";
 import { GetStorageOto, SaveStorageOto } from "../services/StorageOto";
 import { LOG } from "../lib/Logging";
 import { fftSetting } from "../config/setting";
+import { IFileSystemAdapter } from '../Lib/FileSystem/FileSystemAdapter';
 
 interface OtoProjectStore {
+  fileSystem: IFileSystemAdapter | null;
+  setFileSystem: (fileSystem: IFileSystemAdapter | null) => void;
   oto: Oto | null;
   setOto: (oto: Oto | null) => void;
   record: OtoRecord | null;
@@ -27,7 +30,9 @@ interface OtoProjectStore {
 }
 
 export const useOtoProjectStore = create<OtoProjectStore>()((set, get) => ({
+  fileSystem: null,
   oto: null,
+  setFileSystem: (adapter: IFileSystemAdapter) => set({ fileSystem: adapter }),
   setOto: (oto) => {
     set({ oto });
     // oto の変更を監視して処理を実行
@@ -112,4 +117,12 @@ export const useOtoProjectStore = create<OtoProjectStore>()((set, get) => ({
   setZipFileName: (zipFileName) => set({ zipFileName }),
   wav: null,
   setWav: (wav) => set({ wav }),
+
+  loadWavFile: async (wPath: string) => {  
+    const { fileSystem } = get();  
+    if (!fileSystem) return null;  
+      
+    const buffer = await fileSystem.readFile(wPath);  
+    return new Wave(buffer);  
+  }  
 }));
