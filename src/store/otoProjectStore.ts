@@ -6,7 +6,7 @@ import { create } from "zustand";
 import { GetStorageOto, SaveStorageOto } from "../services/StorageOto";
 import { LOG } from "../lib/Logging";
 import { fftSetting } from "../config/setting";
-import { IFileSystemAdapter } from '../Lib/FileSystem/FileSystemAdapter';
+import { IFileSystemAdapter } from '../lib/FileSystem/FileSystemAdapter';
 
 interface OtoProjectStore {
   fileSystem: IFileSystemAdapter | null;

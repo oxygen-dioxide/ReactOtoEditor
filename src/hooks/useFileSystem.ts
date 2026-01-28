@@ -1,6 +1,6 @@
 import { useEffect } from 'react';  
 import { useOtoProjectStore } from '../store/otoProjectStore';  
-import { VSCodeFileSystemAdapter } from '../Lib/FileSystem/FileSystemAdapter';  
+import { VSCodeFileSystemAdapter } from '../lib/FileSystem/FileSystemAdapter';  
   
 declare const __BUILD_TARGET__: string;  
   
