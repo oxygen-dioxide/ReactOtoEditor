@@ -27,6 +27,8 @@ interface OtoProjectStore {
   setZipFileName: (zipFileName: string) => void;
   wav: Wave | null;
   setWav: (wav: Wave | null) => void;
+  loadOtoFromContent: (content: string) => void;
+  getOtoContent: () => string;
 }
 
 export const useOtoProjectStore = create<OtoProjectStore>()((set, get) => ({
@@ -118,11 +120,47 @@ export const useOtoProjectStore = create<OtoProjectStore>()((set, get) => ({
   wav: null,
   setWav: (wav) => set({ wav }),
 
-  loadWavFile: async (wPath: string) => {  
+loadWavFile: async (wPath: string) => {  
     const { fileSystem } = get();  
     if (!fileSystem) return null;  
-      
+    
     const buffer = await fileSystem.readFile(wPath);  
     return new Wave(buffer);  
-  }  
+  },
+
+  loadOtoFromContent: (content: string) => {
+    try {
+      const oto = new Oto();
+      oto.ParseOto("", content);
+      
+      // Set target directory to root for VSCode
+      set({ 
+        oto, 
+        targetDir: "",
+        targetDirs: [""]
+      });
+      
+      // Set first record if available
+      const fileNames = oto.GetFileNames("");
+      if (fileNames.length > 0) {
+        const filename = fileNames[0];
+        const aliases = oto.GetAliases("", filename);
+        if (aliases.length > 0) {
+          const record = oto.GetRecord("", filename, aliases[0]);
+          set({ record, wavFileName: filename });
+        }
+      }
+      
+      LOG.debug("oto.ini content loaded successfully", "OtoProjectStore");
+    } catch (error) {
+      LOG.error("Failed to load oto.ini content", "OtoProjectStore");
+      console.error("Error loading oto.ini:", error);
+    }
+  },
+
+  getOtoContent: () => {
+    const { oto } = get();
+    if (!oto) return "";
+    return oto.toString();
+  }
 }));

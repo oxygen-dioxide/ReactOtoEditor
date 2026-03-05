@@ -14,6 +14,8 @@ import { EditorView } from "./Editor/EditorView";
 import { useInitializeApp } from "../hooks/useInitializeApp";
 import { useThemeMode } from "../hooks/useThemeMode";
 import { useOtoProjectStore } from "../store/otoProjectStore";
+import { useVSCodeIntegration } from "../hooks/useVSCodeIntegration";
+import { useEffect } from "react";
 
 /**
  * Reactのエンドポイント
@@ -23,15 +25,45 @@ export const App: React.FC = () => {
   useInitializeApp();
   const mode_ = useThemeMode();
   const { language } = useCookieStore();
-  const { oto } = useOtoProjectStore();
+  const { oto, loadOtoFromContent, getOtoContent } = useOtoProjectStore();
+  const { isVSCodeEnv, document: vscodeDocument, isReady } = useVSCodeIntegration();
+  
   const theme = React.useMemo(
     () => createTheme(getDesignTokens(mode_)),
     [mode_]
   );
   React.useMemo(() => {
     i18n.changeLanguage(language);
-    document.documentElement.lang = language;
+    if (typeof window !== 'undefined' && window.document) {
+      window.document.documentElement.lang = language;
+    }
   }, [language]);
+
+  // Load oto.ini content in VSCode environment
+  useEffect(() => {
+    if (isVSCodeEnv && vscodeDocument && !oto) {
+      loadOtoFromContent(vscodeDocument.content);
+    }
+  }, [isVSCodeEnv, vscodeDocument, oto, loadOtoFromContent]);
+
+  // Auto-save in VSCode environment when oto changes
+  useEffect(() => {
+    if (isVSCodeEnv && oto) {
+      const content = getOtoContent();
+      // Note: In a real implementation, you might want to debounce this
+      // or save on specific user actions rather than on every change
+    }
+  }, [isVSCodeEnv, oto, getOtoContent]);
+
+  // In VSCode environment, don't show Header/Footer for cleaner editor experience
+  if (isVSCodeEnv) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {isReady && (oto !== null ? <EditorView /> : <div>Loading oto.ini...</div>)}
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider theme={theme}>

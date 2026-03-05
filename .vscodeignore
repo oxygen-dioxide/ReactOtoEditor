@@ -1,2 +1,55 @@
+# Exclude source files (TypeScript)
+src/
 **/*.ts
 **/tsconfig.json
+
+# Exclude most node_modules except essential runtime dependencies
+node_modules/
+!node_modules/@types/
+!node_modules/utauoto/
+!node_modules/utauwav/
+!node_modules/jszip/
+!node_modules/react/
+!node_modules/react-dom/
+!node_modules/@mui/
+!node_modules/@emotion/
+!node_modules/styled-components/
+!node_modules/i18next/
+!node_modules/react-i18next/
+!node_modules/react-cookie/
+!node_modules/react-error-boundary/
+!node_modules/zustand/
+!node_modules/iconv-lite/
+
+# Exclude test files
+__tests__/
+*.test.ts
+*.test.tsx
+
+# Exclude documentation
+docs/
+*.md
+
+# Exclude build artifacts not needed for extension
+dist-extension/
+
+# Exclude storybook
+stories/
+.storybook/
+
+# Exclude configuration files not needed for extension
+.eslintrc*
+.prettierrc*
+vitest.config.ts
+vitest.setup.ts
+
+# Exclude development artifacts
+.vscode-test/
+
+# Exclude package-lock.json
+package-lock.json
+
+# But keep the extension source files
+!src/vscode/
+!src/index.tsx
+!dist/
